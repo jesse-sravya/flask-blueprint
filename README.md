@@ -6,7 +6,7 @@ This application fetches articles from wikipedia and extracts insights from the 
 
 Clone the repo and cd into the repo folder
 ```
-cd flask_blueprint
+cd flask-blueprint
 ```
 
 Create a virtual environment so that the dependencies stay within the project
