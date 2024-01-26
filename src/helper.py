@@ -1,4 +1,10 @@
 import re
+import requests
+
+from urllib.parse import urljoin
+
+URL = 'https://en.wikipedia.org/api/rest_v1/page/summary/'
+CONTENT_KEY = 'extract'
 
 
 def get_top_words(content, limit=10, stop_words=[]):
@@ -15,7 +21,12 @@ def get_top_words(content, limit=10, stop_words=[]):
     freq_map = sorted(freq_map.items(), key=lambda x: x[1], reverse=True)
     return list(map(lambda item: item[0], freq_map[:limit]))
 
-
 def get_stop_words(file):
     with open(file) as f:
         return f.read().split('\n')
+
+def get_article(article_name):
+    response = requests.get(url = urljoin(URL, article_name))
+    if response.status_code != 200:
+        return False, None
+    return True, response.json().get(CONTENT_KEY, '')

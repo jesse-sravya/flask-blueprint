@@ -2,13 +2,10 @@ import requests
 
 from urllib.parse import urljoin
 from flask import Blueprint, jsonify, request
-from src.helper import get_top_words, get_stop_words
+from src.helper import get_top_words, get_stop_words, get_article
 
-# constants
-URL = 'https://en.wikipedia.org/api/rest_v1/page/summary/'
 STOP_WORDS_FILE = 'stopwords.txt'
 DEFAULT_LIMIT = 10
-CONTENT_KEY = 'extract'
 
 STOP_WORDS = get_stop_words(STOP_WORDS_FILE)
 routes = Blueprint('routes', __name__)
@@ -29,11 +26,10 @@ def fetch(article_name):
         limit = int(limit)
     else:
         limit = DEFAULT_LIMIT
-    response = requests.get(url = urljoin(URL, article_name))
 
-    if response.status_code != 200:
+    status, content = get_article(article_name)
+    if not status:
         return jsonify({ 'success': False, 'message': "wikipedia hasn't returned a valid response" })
-    
-    text = response.json()
-    return jsonify({ 'success': True, 'data': get_top_words(text.get(CONTENT_KEY, ''), limit, STOP_WORDS) })
+
+    return jsonify({ 'success': True, 'data': get_top_words(content, limit, STOP_WORDS) })
 
